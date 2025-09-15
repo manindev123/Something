@@ -1,0 +1,36 @@
+# Ignore Terraform files
+*.tfstate
+*.tfstate.*
+.terraform/
+
+# Ignore Terraform plan files
+*.tfplan
+
+# Ignore Terraform override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Ignore sensitive files (like variable files with credentials)
+*.tfvars
+*.tfvars.json
+
+# Ignore temporary files
+*.log
+*.tmp
+
+# Ignore directories related to IDEs (e.g., VSCode, IntelliJ)
+.vscode/
+.idea/
+
+# Ignore macOS system files
+.DS_Store
+
+# Ignore build directories (e.g., for Node.js, Java projects)
+node_modules/
+build/
+
+# Ignore test coverage files
+coverage/
+
