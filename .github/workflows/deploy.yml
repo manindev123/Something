@@ -1,0 +1,25 @@
+name: Build & Deploy to Local k3d
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  deploy:
+    # 👇 We'll run this job directly on your EC2 server (which hosts k3d)
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+
+      - name: Build & load Docker image
+        run: |
+          docker build -t pi-credit-app:latest .
+          k3d image import pi-credit-app:latest --cluster picredit
+
+      - name: Apply Kubernetes manifests
+        run: |
+          kubectl apply -f deployment.yaml
+          kubectl rollout status deployment/pi-credit
+
