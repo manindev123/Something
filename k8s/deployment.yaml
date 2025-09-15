@@ -1,39 +1,34 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: pi-credit
-  namespace: pi-credit
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: pi-credit
-  template:
-    metadata:
-      labels:
-        app: pi-credit
-    spec:
-      containers:
-        - name: pi-credit
-          image: pi-credit-app:latest   # built and imported by GitHub Actions
-          imagePullPolicy: IfNotPresent
-          ports:
-            - containerPort: 8080
-          env:
-            - name: DB_HOST
-              value: pg-service
-            - name: DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: db-secret
-                  key: DB_USER
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: db-secret
-                  key: DB_PASSWORD
-            - name: DB_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: db-secret
-                  key: DB_NAME
+name: Build & Deploy to Local k3d
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  deploy:
+    runs-on: self-hosted   # your EC2 runner
+
+    steps:
+      # Checkout repo
+      - name: Checkout source
+        uses: actions/checkout@v3
+
+      # Build Docker image from app/ folder
+      - name: Build Docker image
+        run: docker build -t pi-credit-app:latest ./app
+
+      # Import image into k3d cluster
+      - name: Load image into k3d
+        run: k3d image import pi-credit-app:latest -c picredit
+
+      # Apply Kubernetes manifests
+      - name: Apply Kubernetes manifests
+        run: |
+          kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/service.yaml
+
+      # Verify rollout
+      - name: Verify Deployment rollout
+        run: kubectl rollout status deployment/pi-credit --timeout=120s
