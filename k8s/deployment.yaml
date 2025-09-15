@@ -1,35 +1,39 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: web
-  namespace: picredit
+  name: pi-credit
+  namespace: pi-credit
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: web
+      app: pi-credit
   template:
     metadata:
       labels:
-        app: web
+        app: pi-credit
     spec:
       containers:
-        - name: web
-          image: REPLACE_ME_ECR_IMAGE   # CI will push image and you will replace this before `kubectl apply`
+        - name: pi-credit
+          image: pi-credit-app:latest   # built and imported by GitHub Actions
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
-          envFrom:
-            - configMapRef: { name: app-config }
-            - secretRef:    { name: db-credentials }
-          readinessProbe:
-            httpGet: { path: /health, port: 8080 }
-            initialDelaySeconds: 5
-            periodSeconds: 5
-          livenessProbe:
-            httpGet: { path: /health, port: 8080 }
-            initialDelaySeconds: 15
-            periodSeconds: 10
-          resources:
-            requests: { cpu: "100m", memory: "128Mi" }
-            limits:   { cpu: "500m", memory: "256Mi" }
-
+          env:
+            - name: DB_HOST
+              value: pg-service
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: DB_PASSWORD
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: DB_NAME
