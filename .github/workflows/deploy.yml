@@ -13,6 +13,12 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v3
 
+      - name: Fix kubeconfig for k3d
+        run: |
+          mkdir -p ~/.kube
+          k3d kubeconfig get picredit | sed 's/0.0.0.0/127.0.0.1/g' > ~/.kube/config
+          kubectl get nodes
+
       - name: Build & load Docker image
         run: |
           docker build -t pi-credit-app:latest -f app/Dockerfile .
