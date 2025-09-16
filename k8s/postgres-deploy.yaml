@@ -49,9 +49,15 @@ spec:
           image: postgres:15
           ports:
             - containerPort: 5432
-          envFrom:
-            - secretRef:
-                name: db-secret
+          env:
+            - secretKeyRef:
+                - name: DB_USER
+                  value: appuser
+                - name: DB_PASSWORD
+                  value: pass123
+                - name: DB_NAME
+                  value: picredit
+                
           volumeMounts:
             - name: pgdata
               mountPath: /var/lib/postgresql/data
