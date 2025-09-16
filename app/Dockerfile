@@ -8,4 +8,4 @@ COPY --from=builder /install/deps /usr/local
 COPY . .
 ENV PORT=8080
 EXPOSE 8080
-CMD ["python", "app.py"]
+CMD ["python", "app/app.py"]
