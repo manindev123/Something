@@ -6,7 +6,7 @@ metadata:
 spec:
   type: LoadBalancer
   selector:
-    app: pi-credit-app
+    app: pi-credit
   ports:
     - port: 8080
       targetPort: 8080
