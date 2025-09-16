@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: pi-credit-app
+  namespace: pi-credit
   labels:
     app: pi-credit
 spec:
