@@ -1,6 +1,6 @@
 FROM python:3.11-slim AS builder
 WORKDIR /install
-COPY requirements.txt .
+COPY app/requirements.txt .
 RUN pip install --prefix=/install/deps --no-cache-dir -r requirements.txt
 FROM python:3.11-slim
 WORKDIR /app
