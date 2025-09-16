@@ -15,7 +15,7 @@ jobs:
 
       - name: Build & load Docker image
         run: |
-          docker build -t pi-credit-app:latest .
+          docker build -t pi-credit-app:latest -f app/Dockerfile .
           k3d image import pi-credit-app:latest --cluster picredit
 
       - name: Apply Kubernetes manifests
